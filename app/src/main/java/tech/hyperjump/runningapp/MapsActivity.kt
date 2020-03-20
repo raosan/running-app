@@ -1,9 +1,12 @@
 package tech.hyperjump.runningapp
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
 import android.location.LocationListener
+import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -17,6 +20,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
+import kotlinx.android.synthetic.main.activity_maps.*
 
 const val REQUEST_CODE_LOCATION_PERMISSION = 0
 const val POLYLINE_WIDTH = 8f
@@ -35,6 +39,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
     // list of polyline points
     private val pathPoints = mutableListOf<LatLng>()
 
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
@@ -42,6 +47,22 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        requestPermission()
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        btnStartDrawing.setOnClickListener {
+            if (locationPermissionGranted && !isTracking) {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, this)
+                isTracking = true
+            }
+        }
+
+        btnStopDrawing.setOnClickListener {
+            if (isTracking) {
+                isTracking = false
+                locationManager.removeUpdates(this)
+            }
+        }
     }
 
     private fun requestPermission() {
