@@ -1,6 +1,7 @@
 package tech.hyperjump.runningapp
 
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
 import android.location.LocationListener
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +15,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
 
 const val REQUEST_CODE_LOCATION_PERMISSION = 0
 const val POLYLINE_WIDTH = 8f
@@ -31,6 +33,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
 
     // list of polyline points
     private val pathPoints = mutableListOf<LatLng>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_maps)
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        val mapFragment = supportFragmentManager
+            .findFragmentById(R.id.map) as SupportMapFragment
+        mapFragment.getMapAsync(this)
+    }
 
     private fun requestPermission() {
         if (ContextCompat.checkSelfPermission(
@@ -64,13 +75,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_maps)
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        val mapFragment = supportFragmentManager
-                .findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
+    private fun addPathPoint(location: Location?) {
+        if (location != null) {
+            val position = LatLng(location.latitude, location.longitude)
+            if(pathPoints.isEmpty()) {
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(position, MAP_ZOOM))
+            }
+
+            pathPoints.add(position)
+            mMap.addPolyline(PolylineOptions()
+                .color(Color.RED)
+                .width(POLYLINE_WIDTH)
+                .addAll(pathPoints))
+        }
     }
 
     /**
