@@ -1,5 +1,7 @@
 package tech.hyperjump.runningapp
 
+import android.location.Location
+import android.location.LocationListener
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 
@@ -10,9 +12,22 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+const val REQUEST_CODE_LOCATION_PERMISSION = 0
+const val POLYLINE_WIDTH = 8f
+const val MAP_ZOOM = 14f
+
+const val TAG = "MapsActivity"
+
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
 
     private lateinit var mMap: GoogleMap
+    private var locationPermissionGranted = false
+
+    private var lastLocation: Location? = null
+    private var isTracking = false
+
+    // list of polyline points
+    private val pathPoints = mutableListOf<LatLng>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
