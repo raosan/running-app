@@ -26,7 +26,7 @@ const val TAG = "MapsActivity"
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
 
-    private lateinit var mMap: GoogleMap
+    private lateinit var googleMap: GoogleMap
     private var locationPermissionGranted = false
 
     private var lastLocation: Location? = null
@@ -80,11 +80,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         if (location != null) {
             val position = LatLng(location.latitude, location.longitude)
             if(pathPoints.isEmpty()) {
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(position, MAP_ZOOM))
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(position, MAP_ZOOM))
             }
 
             pathPoints.add(position)
-            mMap.addPolyline(PolylineOptions()
+            googleMap.addPolyline(PolylineOptions()
                 .color(Color.RED)
                 .width(POLYLINE_WIDTH)
                 .addAll(pathPoints))
@@ -101,7 +101,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
      * installed Google Play services and returned to the app.
      */
     override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
+        this.googleMap = googleMap
     }
 
     override fun onLocationChanged(newLoction: Location?) {
