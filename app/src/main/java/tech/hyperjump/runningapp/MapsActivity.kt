@@ -6,6 +6,7 @@ import android.location.Location
 import android.location.LocationListener
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
@@ -67,7 +68,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when(requestCode) {
             REQUEST_CODE_LOCATION_PERMISSION -> {
-                if (grantResults.isNotEmpty()() && grantResults[0] ==
+                if (grantResults.isNotEmpty() && grantResults[0] ==
                     PackageManager.PERMISSION_GRANTED) {
                     locationPermissionGranted = true
                 }
@@ -101,26 +102,25 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
      */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-
-        // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
     }
 
-    override fun onLocationChanged(location: Location?) {
-        TODO("Not yet implemented")
+    override fun onLocationChanged(newLoction: Location?) {
+        if(isTracking) {
+            addPathPoint(newLoction)
+            Log.d(TAG, "Location changed: " +
+                "${newLoction?.latitude},${newLoction?.longitude}")
+        }
     }
 
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-        TODO("Not yet implemented")
+        Log.d(TAG, "Status change: $status, $provider")
     }
 
     override fun onProviderEnabled(provider: String?) {
-        TODO("Not yet implemented")
+        Log.d(TAG, "Provider enabled: $provider")
     }
 
     override fun onProviderDisabled(provider: String?) {
-        TODO("Not yet implemented")
+        Log.d(TAG, "Provider disableed: $provider")
     }
 }
