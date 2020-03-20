@@ -123,6 +123,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
      */
     override fun onMapReady(googleMap: GoogleMap) {
         this.googleMap = googleMap
+
+        // Add a marker in jakarta and move the camera
+        val jakarta = LatLng(-6.20, 106.84)
+        this.googleMap.addMarker(MarkerOptions().position(jakarta).title("Marker in Sydney"))
+        this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(jakarta))
+
     }
 
     override fun onLocationChanged(newLoction: Location?) {
