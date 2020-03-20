@@ -1,9 +1,12 @@
 package tech.hyperjump.runningapp
 
+import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -28,6 +31,22 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
 
     // list of polyline points
     private val pathPoints = mutableListOf<LatLng>()
+
+    private fun requestPermission() {
+        if (ContextCompat.checkSelfPermission(
+                applicationContext,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            locationPermissionGranted = true
+        } else {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                REQUEST_CODE_LOCATION_PERMISSION
+            )
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
