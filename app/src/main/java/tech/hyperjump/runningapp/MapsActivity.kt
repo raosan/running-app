@@ -7,12 +7,11 @@ import android.graphics.Color
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -35,6 +34,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
 
     private var lastLocation: Location? = null
     private var isTracking = false
+    private var distanceKm: Float = 0F
 
     // list of polyline points
     private val pathPoints = mutableListOf<LatLng>()
@@ -105,6 +105,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
             }
 
             pathPoints.add(position)
+
+            distanceKm += calculateDistance(location)
+            distance.text = "${"%.2f".format(distanceKm).toDouble()} Km"
+            lastLocation = location
+
+
             googleMap.addPolyline(PolylineOptions()
                 .color(Color.RED)
                 .width(POLYLINE_WIDTH)
@@ -131,12 +137,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
 
     }
 
-    override fun onLocationChanged(newLoction: Location?) {
+    override fun onLocationChanged(newLocation: Location) {
         if(isTracking) {
-            addPathPoint(newLoction)
+            addPathPoint(newLocation)
             Log.d(TAG, "Location changed: " +
-                "${newLoction?.latitude},${newLoction?.longitude}")
+                "${newLocation?.latitude},${newLocation?.longitude}")
         }
+    }
+
+    private fun calculateDistance(newLoction: Location): Float {
+        if (lastLocation != null && newLoction != null) {
+            return lastLocation!!.distanceTo(newLoction) / 1000
+        }
+        return 0f
     }
 
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
