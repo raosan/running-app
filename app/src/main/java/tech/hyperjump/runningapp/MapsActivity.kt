@@ -9,6 +9,7 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -50,10 +51,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
 
         requestPermission()
         val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
         btnStartDrawing.setOnClickListener {
             if (locationPermissionGranted && !isTracking) {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, this)
                 isTracking = true
+                btnStartDrawing.visibility = View.GONE
+                btnStopDrawing.visibility = View.VISIBLE
             }
         }
 
@@ -61,6 +65,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
             if (isTracking) {
                 isTracking = false
                 locationManager.removeUpdates(this)
+
+                btnStartDrawing.visibility = View.VISIBLE
+                btnStopDrawing.visibility = View.GONE
             }
         }
     }

@@ -15,32 +15,37 @@
         map:layout_constraintStart_toStartOf="parent"
         map:layout_constraintEnd_toEndOf="parent"
         map:layout_constraintBottom_toBottomOf="parent"/>
-    <Button
-        android:id="@+id/btnStartDrawing"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start"
-        map:layout_constraintEnd_toStartOf="@id/distance"
-        map:layout_constraintStart_toStartOf="parent"
-        map:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="12dp"/>
     <TextView
         android:id="@+id/distance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="0.00 Km"
         android:textSize="24sp"
-        map:layout_constraintEnd_toStartOf="@id/btnStopDrawing"
-        map:layout_constraintStart_toEndOf="@id/btnStartDrawing"
+        map:layout_constraintEnd_toEndOf="parent"
+        map:layout_constraintStart_toStartOf="parent"
         map:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="76dp"/>
+    <Button
+        android:id="@+id/btnStartDrawing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start"
+        map:layout_constraintEnd_toEndOf="parent"
+        map:layout_constraintStart_toStartOf="parent"
+        map:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="16dp"
+        android:textColor="@color/white"
+        android:background="@color/colorPrimary"/>
     <Button
         android:id="@+id/btnStopDrawing"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Stop"
-        map:layout_constraintStart_toEndOf="@id/distance"
         map:layout_constraintEnd_toEndOf="parent"
+        map:layout_constraintStart_toStartOf="parent"
         map:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="12dp"/>
+        android:layout_marginBottom="16dp"
+        android:textColor="@color/white"
+        android:background="@color/colorAccent"
+        android:visibility="gone"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
