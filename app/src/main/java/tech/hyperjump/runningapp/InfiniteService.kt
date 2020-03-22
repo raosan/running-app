@@ -4,10 +4,13 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.os.IBinder
 import android.os.PowerManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.lang.IllegalStateException
 
 const val CHANNEL_ID = "NotificationChannel"
@@ -83,13 +86,22 @@ class InfiniteService: Service() {
             .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "InfiniteService::wakelock")
             .apply { acquire() }
 
-        startTrackingRun(FETCH_DATA_INTERVAL)
+        CoroutineScope(Dispatchers.IO).launch {
+            startTrackingRun(FETCH_DATA_INTERVAL)
+        }
 
         Log.d("infiniteService", "Service started")
         isServiceRunning = true
     }
 
-    private fun startTrackingRun(fetchDataInterval: Long) {
-        TODO("Not yet implemented")
+    private suspend fun startTrackingRun(intervalInMillis: Long) {
+        while (isServiceRunning) {
+            trackRun()
+            delay(intervalInMillis)
+        }
+    }
+
+    private fun trackRun() {
+        Log.d("InfiniteService", "Tracking run...")
     }
 }

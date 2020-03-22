@@ -2,11 +2,13 @@ package tech.hyperjump.runningapp
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -58,6 +60,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
                 isTracking = true
                 btnStartDrawing.visibility = View.GONE
                 btnStopDrawing.visibility = View.VISIBLE
+
+                sendActionToService(ACTION_START)
             }
         }
 
@@ -68,9 +72,23 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
 
                 btnStartDrawing.visibility = View.VISIBLE
                 btnStopDrawing.visibility = View.GONE
+
+                sendActionToService(ACTION_STOP)
             }
         }
     }
+
+    private fun sendActionToService(action: String) {
+        Intent(applicationContext, InfiniteService::class.java).also {
+            it.action = action
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(it)
+            } else {
+                startService(it)
+            }
+        }
+    }
+
 
     private fun requestPermission() {
         if (ContextCompat.checkSelfPermission(
@@ -147,13 +165,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
     override fun onLocationChanged(newLocation: Location) {
         if(isTracking) {
             addPathPoint(newLocation)
-            Log.d(TAG, "Location changed: " +
-                "${newLocation?.latitude},${newLocation?.longitude}")
+//            Log.d(TAG, "Location changed: " +
+//                "${newLocation?.latitude},${newLocation?.longitude}")
         }
     }
 
     private fun calculateDistance(newLoction: Location): Float {
-        if (lastLocation != null && newLoction != null) {
+        if (lastLocation != null) {
             return lastLocation!!.distanceTo(newLoction) / 1000
         }
         return 0f
