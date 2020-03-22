@@ -1,11 +1,12 @@
 package tech.hyperjump.runningapp
 
-import android.app.Notification
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
+import androidx.core.app.NotificationCompat
 import java.lang.IllegalStateException
 
 const val CHANNEL_ID = "NotificationChannel"
@@ -24,7 +25,7 @@ class InfiniteService: Service() {
 
     override fun onCreate() {
         super.onCreate()
-        createNoticationChannel()
+        createNotificationChannel()
 
         val mapsActivityIntent = Intent(this, MapsActivity::class.java).let {
             PendingIntent.getActivity(this, REQUEST_CODE_NOTIFICATION, it, 0)
@@ -33,12 +34,24 @@ class InfiniteService: Service() {
         startForeground(FOREGROUND_ID, getNotification(mapsActivityIntent))
     }
 
-    private fun getNotification(mapsActivityIntent: PendingIntent?): Notification? {
-        TODO("Not yet implemented")
-    }
+    private fun getNotification(pendingIntent: PendingIntent) =
+        NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle("Running App")
+            .setContentText(("Tracking your run"))
+            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setContentIntent(pendingIntent)
+            .build()
 
-    private fun createNoticationChannel() {
-        TODO("Not yet implemented")
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "myDescription"
+            }
+            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            manager.createNotificationChannel(channel)
+        }
     }
 
     override fun onBind(intent: Intent?) = null
