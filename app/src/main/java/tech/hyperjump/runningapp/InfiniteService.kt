@@ -67,7 +67,14 @@ class InfiniteService: Service() {
     }
 
     private fun stop() {
-        TODO("Not yet implemented")
+        if (!isServiceRunning) return
+        if (wakeLock.isHeld) {
+            wakeLock.release()
+        }
+        stopForeground(true)
+        stopSelf()
+        isServiceRunning = false
+        Log.d("infiniteService", "Service stopped")
     }
 
     private fun start() {
