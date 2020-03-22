@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import java.lang.IllegalStateException
 
@@ -14,7 +15,7 @@ const val CHANNEL_NAME = "BestChannelEver"
 const val FOREGROUND_ID= 1
 const val REQUEST_CODE_NOTIFICATION = 0
 
-const val FETCH_DATA_INTERVAL = 0
+const val FETCH_DATA_INTERVAL = 200L // every 2 second
 
 const val  ACTION_START = "ACTION_START"
 const val  ACTION_STOP = "ACTION_STOP"
@@ -70,6 +71,18 @@ class InfiniteService: Service() {
     }
 
     private fun start() {
+        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+        wakeLock = powerManager
+            .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "InfiniteService::wakelock")
+            .apply { acquire() }
+
+        startTrackingRun(FETCH_DATA_INTERVAL)
+
+        Log.d("infiniteService", "Service started")
+        isServiceRunning = true
+    }
+
+    private fun startTrackingRun(fetchDataInterval: Long) {
         TODO("Not yet implemented")
     }
 }
